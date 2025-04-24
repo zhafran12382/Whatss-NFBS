@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp NFBS Global</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #25D366;
+            --secondary-color: #128C7E;
+            --dark-color: #075E54;
+            --light-color: #DCF8C6;
+            --bubble-sent: #DCF8C6;
+            --bubble-received: #FFFFFF;
+            --text-color: #4A4A4A;
+            --text-light: #757575;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: #E5E5E5;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Login Page */
+        .login-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            background-color: var(--dark-color);
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .login-container h1 {
+            color: var(--dark-color);
+            margin-bottom: 24px;
+            font-weight: 700;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        .login-btn {
+            background-color: var(--dark-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .login-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .error-message {
+            color: #E53935;
+            margin-top: 16px;
+            font-size: 14px;
+            display: none;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            display: none;
+            width: 100%;
+            max-width: 1000px;
+            height: 90vh;
+            background-color: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .chat-header {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            z-index: 10;
+        }
+
+        .chat-header h2 {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 12px;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            transition: opacity 0.3s;
+        }
+
+        .logout-btn:hover {
+            opacity: 0.8;
+        }
+
+        .logout-btn svg {
+            margin-right: 6px;
+        }
+
+        .chat-messages {
+            height: calc(100% - 120px);
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #E5DDD5;
+            background-image: url('https://web.whatsapp.com/img/bg-chat-tile-light_a4be512e7195b6b733d9110b408f075d.png');
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            max-width: 75%;
+            display: flex;
+            flex-direction: column;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .message-sent {
+            align-items: flex-end;
+            margin-left: auto;
+        }
+
+        .message-received {
+            align-items: flex-start;
+            margin-right: auto;
+        }
+
+        .message-sender {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .message-content {
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+            word-wrap: break-word;
+            box-shadow: var(--shadow);
+            line-height: 1.4;
+        }
+
+        .message-sent .message-content {
+            background-color: var(--bubble-sent);
+            border-top-right-radius: 4px;
+            color: var(--text-color);
+        }
+
+        .message-received .message-content {
+            background-color: var(--bubble-received);
+            border-top-left-radius: 4px;
+            color: var(--text-color);
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .chat-input-container {
+            height: 80px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            background-color: #F0F2F5;
+            border-top: 1px solid #E0E0E0;
+        }
+
+        .attachment-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            margin-right: 12px;
+            color: var(--text-light);
+            transition: color 0.3s;
+        }
+
+        .attachment-btn:hover {
+            color: var(--dark-color);
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 20px;
+            outline: none;
+            font-size: 16px;
+            background-color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .send-btn {
+            background-color: var(--dark-color);
+            color: white;
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            margin-left: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .send-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .send-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .attachment-menu {
+            display: none;
+            position: absolute;
+            bottom: 90px;
+            left: 30px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 8px 0;
+            z-index: 100;
+            width: 200px;
+        }
+
+        .attachment-menu button {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            padding: 12px 16px;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .attachment-menu button:hover {
+            background-color: #F5F5F5;
+        }
+
+        .attachment-menu button svg {
+            margin-right: 12px;
+            color: var(--text-light);
+        }
+
+        .media-preview {
+            max-width: 250px;
+            max-height: 250px;
+            border-radius: 12px;
+            margin-top: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .audio-message {
+            background-color: #F5F5F5;
+            padding: 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            width: 250px;
+        }
+
+        .audio-message audio {
+            width: 100%;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .typing-indicator.active {
+            opacity: 1;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--text-light);
+            border-radius: 50%;
+            margin-right: 4px;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+            margin-right: 0;
+        }
+
+        .typing-text {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-left: 8px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .chat-container {
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .message {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div class="login-container" id="login-container">
+        <div class="logo">NF</div>
+        <h1>WhatsApp NFBS Global</h1>
+        <div class="input-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Masukkan username Anda" required>
+        </div>
+        <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Masukkan password" required>
+        </div>
+        <button class="login-btn" id="login-btn">Masuk</button>
+        <div class="error-message" id="error-message">Password salah! Password yang benar adalah Ratubagus</div>
+    </div>
+    
+    <!-- Chat Container -->
+    <div class="chat-container" id="chat-container">
+        <div class="chat-header">
+            <h2>Grup Umum NFBS Global</h2>
+            <div class="user-info">
+                <div class="user-avatar" id="user-avatar">U</div>
+                <button class="logout-btn" id="logout-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Keluar
+                </button>
+            </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will appear here -->
+            <div class="typing-indicator" id="typing-indicator">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-text" id="typing-text">Someone is typing...</div>
+            </div>
+        </div>
+        <div class="chat-input-container">
+            <button class="attachment-btn" id="attachment-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                </svg>
+            </button>
+            <div class="attachment-menu" id="attachment-menu">
+                <button id="image-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                    </svg>
+                    Gambar
+                </button>
+                <button id="audio-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                    </svg>
+                    Audio
+                </button>
+            </div>
+            <input type="text" id="message-input" placeholder="Ketik pesan...">
+            <button class="send-btn" id="send-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+    <script>
+        // Firebase Configuration (Replace with your config)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // DOM Elements
+        const loginContainer = document.getElementById('login-container');
+        const chatContainer = document.getElementById('chat-container');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('login-btn');
+        const errorMessage = document.getElementById('error-message');
+        const logoutBtn = document.getElementById('logout-btn');
+        const chatMessages = document.getElementById('chat-messages');
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+        const attachmentBtn = document.getElementById('attachment-btn');
+        const attachmentMenu = document.getElementById('attachment-menu');
+        const imageBtn = document.getElementById('image-btn');
+        const audioBtn = document.getElementById('audio-btn');
+        const userAvatar = document.getElementById('user-avatar');
+        const typingIndicator = document.getElementById('typing-indicator');
+        const typingText = document.getElementById('typing-text');
+
+        // Global variables
+        let currentUser = null;
+        let currentUsername = '';
+        let typingTimeout = null;
+        let isTyping = false;
+
+        // Initialize the app
+        function init() {
+            // Check auth state
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    // User is signed in
+                    currentUser = user;
+                    const storedUsername = localStorage.getItem('whatsapp_nfbs_username');
+                    if (storedUsername) {
+                        currentUsername = storedUsername;
+                        showChatInterface();
+                        loadMessages();
+                    }
+                } else {
+                    // User is signed out
+                    showLoginInterface();
+                }
+            });
+        }
+
+        // Show login interface
+        function showLoginInterface() {
+            loginContainer.style.display = 'block';
+            chatContainer.style.display = 'none';
+            usernameInput.value = '';
+            passwordInput.value = '';
+        }
+
+        // Show chat interface
+        function showChatInterface() {
+            loginContainer.style.display = 'none';
+            chatContainer.style.display = 'block';
+            
+            // Set user avatar initial
+            if (currentUsername) {
+                userAvatar.textContent = currentUsername.charAt(0).toUpperCase();
+            }
+            
+            // Scroll to bottom
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 100);
+        }
+
+        // Login function
+        loginBtn.addEventListener('click', async () => {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            if (!username || !password) {
+                showError('Username dan password harus diisi!');
+                return;
+            }
+            
+            if (password !== 'Ratubagus') {
+                showError('Password salah! Password yang benar adalah Ratubagus');
+                return;
+            }
+            
+            try {
+                // Sign in anonymously (Firebase auth)
+                const userCredential = await auth.signInAnonymously();
+                currentUser = userCredential.user;
+                currentUsername = username;
+                localStorage.setItem('whatsapp_nfbs_username', currentUsername);
+                
+                // Show chat interface
+                showChatInterface();
+                loadMessages();
+                
+                // Add welcome message if first time
+                const welcomeMessage = {
+                    sender: 'System',
+                    content: `${currentUsername} telah bergabung ke grup!`,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    type: 'text'
+                };
+                
+                await db.collection('messages').add(welcomeMessage);
+            } catch (error) {
+                showError('Terjadi kesalahan. Silakan coba lagi.');
+                console.error('Login error:', error);
+            }
+        });
+
+        // Show error message
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        // Logout function
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                // Add leave message
+                const leaveMessage = {
+                    sender: 'System',
+                    content: `${currentUsername} telah meninggalkan grup.`,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    type: 'text'
+                };
+                
+                await db.collection('messages').add(leaveMessage);
+                
+                // Sign out
+                await auth.signOut();
+                currentUser = null;
+                currentUsername = '';
+                localStorage.removeItem('whatsapp_nfbs_username');
+                showLoginInterface();
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        });
+
+        // Load messages from Firestore
+        function loadMessages() {
+            db.collection('messages')
+                .orderBy('timestamp')
+                .onSnapshot(snapshot => {
+                    chatMessages.innerHTML = ''; // Clear existing messages
+                    
+                    // Add typing indicator
+                    chatMessages.appendChild(typingIndicator);
+                    
+                    snapshot.forEach(doc => {
+                        const message = doc.data();
+                        renderMessage(message);
+                    });
+                    
+                    // Scroll to bottom
+                    setTimeout(() => {
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 100);
+                });
+        }
+
+        // Render a single message
+        function renderMessage(message) {
+            const messageDiv = document.createElement('div');
+            const isSent = message.sender === currentUsername;
+            
+            messageDiv.className = `message ${isSent ? 'message-sent' : 'message-received'}`;
+            
+            // Don't show sender for system messages
+            if (message.sender !== 'System') {
+                const senderDiv = document.createElement('div');
+                senderDiv.className = 'message-sender';
+                senderDiv.textContent = message.sender;
+                messageDiv.appendChild(senderDiv);
+            }
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            
+            if (message.type === 'text') {
+                contentDiv.textContent = message.content;
+            } else if (message.type === 'image') {
+                const img = document.createElement('img');
+                img.src = message.content;
+                img.className = 'media-preview';
+                contentDiv.appendChild(img);
+            } else if (message.type === 'audio') {
+                const audioDiv = document.createElement('div');
+                audioDiv.className = 'audio-message';
+                const audio = document.createElement('audio');
+                audio.controls = true;
+                audio.src = message.content;
+                audioDiv.appendChild(audio);
+                contentDiv.appendChild(audioDiv);
+            }
+            
+            messageDiv.appendChild(contentDiv);
+            
+            // Add timestamp if available
+            if (message.timestamp) {
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'message-time';
+                
+                let timestamp;
+                if (message.timestamp instanceof firebase.firestore.Timestamp) {
+                    timestamp = message.timestamp.toDate();
+                } else if (typeof message.timestamp === 'string') {
+                    timestamp = new Date(message.timestamp);
+                } else {
+                    timestamp = new Date();
+                }
+                
+                timeDiv.textContent = formatTime(timestamp);
+                messageDiv.appendChild(timeDiv);
+            }
+            
+            chatMessages.insertBefore(messageDiv, typingIndicator);
+        }
+
+        // Format time as HH:MM
+        function formatTime(date) {
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Send message function
+        async function sendMessage(content, type = 'text') {
+            if (!content || !currentUsername) return;
+            
+            try {
+                const newMessage = {
+                    sender: currentUsername,
+                    content: content,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    type: type
+                };
+                
+                await db.collection('messages').add(newMessage);
+                messageInput.value = '';
+                
+                // Scroll to bottom
+                setTimeout(() => {
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 100);
+            } catch (error) {
+                console.error('Error sending message:', error);
+                showError('Gagal mengirim pesan. Silakan coba lagi.');
+            }
+        }
+
+        // Event listeners
+        sendBtn.addEventListener('click', () => {
+            const content = messageInput.value.trim();
+            if (content) {
+                sendMessage(content);
+            }
+        });
+
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const content = messageInput.value.trim();
+                if (content) {
+                    sendMessage(content);
+                }
+            }
+        });
+
+        // Typing indicators
+        messageInput.addEventListener('input', () => {
+            if (!isTyping) {
+                isTyping = true;
+                db.collection('typing').doc(currentUsername).set({
+                    isTyping: true,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+            
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                isTyping = false;
+                db.collection('typing').doc(currentUsername).set({
+                    isTyping: false,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }, 2000);
+        });
+
+        // Listen for typing indicators
+        db.collection('typing')
+            .where('isTyping', '==', true)
+            .onSnapshot(snapshot => {
+                const typers = [];
+                snapshot.forEach(doc => {
+                    if (doc.id !== currentUsername) {
+                        typers.push(doc.id);
+                    }
+                });
+                
+                if (typers.length > 0) {
+                    typingText.textContent = `${typers.join(', ')} ${typers.length > 1 ? 'are' : 'is'} typing...`;
+                    typingIndicator.classList.add('active');
+                } else {
+                    typingIndicator.classList.remove('active');
+                }
+            });
+
+        // Attachment menu
+        attachmentBtn.addEventListener('click', () => {
+            attachmentMenu.style.display = attachmentMenu.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Close attachment menu when clicking elsewhere
+        document.addEventListener('click', (e) => {
+            if (e.target !== attachmentBtn && e.target !== imageBtn && e.target !== audioBtn) {
+                attachmentMenu.style.display = 'none';
+            }
+        });
+
+        // Image attachment
+        imageBtn.addEventListener('click', () => {
+            attachmentMenu.style.display = 'none';
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        sendMessage(event.target.result, 'image');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            
+            input.click();
+        });
+
+        // Audio attachment
+        audioBtn.addEventListener('click', () => {
+            attachmentMenu.style.display = 'none';
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'audio/*';
+            
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        sendMessage(event.target.result, 'audio');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            
+            input.click();
+        });
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
